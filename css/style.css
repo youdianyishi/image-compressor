@@ -4,6 +4,15 @@
     --card-background: rgba(255, 255, 255, 0.8);
     --text-color: #1D1D1F;
     --border-radius: 12px;
+    --border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] {
+    --primary-color: #0A84FF;
+    --background-color: #000000;
+    --card-background: rgba(30, 30, 30, 0.8);
+    --text-color: #FFFFFF;
+    --border-color: rgba(255, 255, 255, 0.1);
 }
 
 * {
@@ -166,4 +175,50 @@ input[type="range"] {
     .image-processor {
         grid-template-columns: 1fr;
     }
+}
+
+/* 主题切换按钮样式 */
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.theme-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+}
+
+.theme-toggle:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .theme-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.theme-icon {
+    width: 24px;
+    height: 24px;
+    fill: var(--text-color);
+}
+
+.theme-icon.sun {
+    display: none;
+}
+
+.theme-icon.moon {
+    display: block;
+}
+
+[data-theme="dark"] .theme-icon.sun {
+    display: block;
+}
+
+[data-theme="dark"] .theme-icon.moon {
+    display: none;
 } 
