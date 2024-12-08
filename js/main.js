@@ -1,4 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // 开场动画
+    const splashScreen = document.getElementById('splashScreen');
+    setTimeout(() => {
+        splashScreen.style.display = 'none';
+    }, 3500); // 3.5秒后完全移除动画
+
     // 主题切换功能
     const themeToggle = document.getElementById('themeToggle');
     const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');

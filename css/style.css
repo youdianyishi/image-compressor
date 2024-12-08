@@ -277,4 +277,61 @@ input[type="range"] {
 
 .compression-ratio {
     color: #34C759;
+}
+
+/* 开场动画样式 */
+.splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--background-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeOut 1s ease-in-out 2.5s forwards;
+}
+
+.splash-content {
+    text-align: center;
+}
+
+.splash-text {
+    font-size: 2.5em;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.8s ease-out 0.5s forwards;
+}
+
+.splash-subtext {
+    font-size: 1.5em;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.8s ease-out 1s forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        visibility: visible;
+    }
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
 } 
