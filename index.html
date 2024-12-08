@@ -30,13 +30,13 @@
                 <!-- 原图区域 -->
                 <section class="original-image">
                     <div class="upload-area" id="uploadArea">
-                        <input type="file" id="imageInput" accept="image/png,image/jpeg" hidden>
+                        <input type="file" id="imageInput" accept="image/png,image/jpeg" multiple hidden>
                         <div class="upload-hint">
                             <svg class="upload-icon" viewBox="0 0 24 24">
                                 <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
                             </svg>
-                            <p>点击或拖拽图片到此处</p>
-                            <p class="sub-hint">支持 PNG、JPG 格式</p>
+                            <p>点击或拖拽多张图片到此处</p>
+                            <p class="sub-hint">支持 PNG、JPG 格式，可同时选择多张图片</p>
                         </div>
                     </div>
                     <div class="image-info">
@@ -60,6 +60,15 @@
                         <button id="downloadBtn" class="download-btn" disabled>下载压缩图片</button>
                     </div>
                 </section>
+
+                <!-- 添加批量压缩结果列表 -->
+                <div class="batch-results" id="batchResults">
+                    <div class="batch-header">
+                        <h3>批量压缩结果</h3>
+                        <button id="downloadAllBtn" class="download-btn" disabled>下载所有图片</button>
+                    </div>
+                    <div class="results-list" id="resultsList"></div>
+                </div>
             </div>
         </div>
     </main>
@@ -72,5 +81,6 @@
     </footer>
 
     <script src="js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </body>
 </html> 

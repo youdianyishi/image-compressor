@@ -29,6 +29,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const qualitySlider = document.getElementById('qualitySlider');
     const qualityValue = document.getElementById('qualityValue');
     const downloadBtn = document.getElementById('downloadBtn');
+    const downloadAllBtn = document.getElementById('downloadAllBtn');
+    const resultsList = document.getElementById('resultsList');
+    let compressedFiles = new Map(); // 存储压缩后的文件
 
     let originalImage = null;
 
@@ -46,10 +49,8 @@ document.addEventListener('DOMContentLoaded', () => {
     uploadArea.addEventListener('drop', (e) => {
         e.preventDefault();
         uploadArea.style.borderColor = '#C7C7CC';
-        const file = e.dataTransfer.files[0];
-        if (file && file.type.match('image.*')) {
-            processImage(file);
-        }
+        const files = e.dataTransfer.files;
+        processMultipleImages(files);
     });
 
     // 处理点击上传
@@ -58,9 +59,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     imageInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            processImage(file);
+        const files = e.target.files;
+        if (files.length > 0) {
+            processMultipleImages(files);
         }
     });
 
@@ -68,57 +69,113 @@ document.addEventListener('DOMContentLoaded', () => {
     qualitySlider.addEventListener('input', (e) => {
         qualityValue.textContent = `${e.target.value}%`;
         if (originalImage) {
-            compressImage(originalImage, e.target.value / 100);
+            compressImage(originalImage, qualitySlider.value / 100);
         }
     });
 
-    // 处理图片压缩
-    function processImage(file) {
-        originalSize.textContent = formatFileSize(file.size);
+    // 添加批量处理函数
+    function processMultipleImages(files) {
+        compressedFiles.clear();
+        resultsList.innerHTML = '';
+        downloadAllBtn.disabled = true;
         
+        Array.from(files).forEach(file => {
+            if (file.type.match('image.*')) {
+                const resultItem = createResultItem(file);
+                resultsList.appendChild(resultItem);
+                processImage(file, resultItem);
+            }
+        });
+    }
+
+    function createResultItem(file) {
+        const item = document.createElement('div');
+        item.className = 'result-item';
+        item.innerHTML = `
+            <img class="preview" src="${URL.createObjectURL(file)}">
+            <div class="result-info">
+                <div class="filename">${file.name}</div>
+                <div class="size-info">
+                    原始大小：${formatFileSize(file.size)}<br>
+                    压缩后：<span class="compressed-size">处理中...</span><br>
+                    <span class="compression-ratio"></span>
+                </div>
+            </div>
+            <button class="download-btn" disabled>下载</button>
+        `;
+        return item;
+    }
+
+    function processImage(file, resultItem) {
         const reader = new FileReader();
         reader.onload = (e) => {
-            originalImage = new Image();
-            originalImage.src = e.target.result;
-            originalImage.onload = () => {
-                originalPreview.src = e.target.result;
-                originalPreview.hidden = false;
-                compressImage(originalImage, qualitySlider.value / 100);
+            const img = new Image();
+            img.src = e.target.result;
+            img.onload = () => {
+                compressImage(img, file.name, resultItem);
             };
         };
         reader.readAsDataURL(file);
     }
 
-    function compressImage(image, quality) {
+    function compressImage(image, filename, resultItem) {
+        const quality = qualitySlider.value / 100;
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
 
-        // 保持原始宽高比
         canvas.width = image.width;
         canvas.height = image.height;
-
-        // 绘制图片
         ctx.fillStyle = 'white';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(image, 0, 0);
 
-        // 压缩
         canvas.toBlob((blob) => {
             const url = URL.createObjectURL(blob);
-            compressedPreview.src = url;
-            compressedPreview.hidden = false;
-            compressedSize.textContent = formatFileSize(blob.size);
+            compressedFiles.set(filename, blob);
             
-            // 启用下载按钮
+            const sizeInfo = resultItem.querySelector('.size-info');
+            const compressedSize = formatFileSize(blob.size);
+            const ratio = ((1 - blob.size / image.width / image.height / 3) * 100).toFixed(1);
+            
+            sizeInfo.querySelector('.compressed-size').textContent = compressedSize;
+            sizeInfo.querySelector('.compression-ratio').textContent = 
+                `节省 ${ratio}% 空间`;
+
+            const downloadBtn = resultItem.querySelector('.download-btn');
             downloadBtn.disabled = false;
             downloadBtn.onclick = () => {
                 const link = document.createElement('a');
-                link.download = 'compressed-image.jpg';
+                link.download = `compressed-${filename}`;
                 link.href = url;
                 link.click();
             };
+
+            downloadAllBtn.disabled = false;
         }, 'image/jpeg', quality);
     }
+
+    // 添加批量下载功能
+    downloadAllBtn.addEventListener('click', () => {
+        const zip = new JSZip();
+        const promises = [];
+
+        compressedFiles.forEach((blob, filename) => {
+            promises.push(
+                blob.arrayBuffer().then(buffer => {
+                    zip.file(`compressed-${filename}`, buffer);
+                })
+            );
+        });
+
+        Promise.all(promises).then(() => {
+            zip.generateAsync({ type: 'blob' }).then(content => {
+                const link = document.createElement('a');
+                link.download = 'compressed-images.zip';
+                link.href = URL.createObjectURL(content);
+                link.click();
+            });
+        });
+    });
 
     function formatFileSize(bytes) {
         if (bytes === 0) return '0 Bytes';

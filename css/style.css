@@ -221,4 +221,60 @@ input[type="range"] {
 
 [data-theme="dark"] .theme-icon.moon {
     display: none;
+}
+
+/* 批量压缩结果样式 */
+.batch-results {
+    margin-top: 20px;
+    background: var(--card-background);
+    border-radius: var(--border-radius);
+    padding: 20px;
+}
+
+.batch-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.results-list {
+    display: grid;
+    gap: 15px;
+}
+
+.result-item {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    gap: 15px;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+}
+
+.result-item img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: var(--border-radius);
+}
+
+.result-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.result-info .filename {
+    font-weight: 500;
+}
+
+.result-info .size-info {
+    font-size: 14px;
+    color: #86868B;
+}
+
+.compression-ratio {
+    color: #34C759;
 } 
