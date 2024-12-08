@@ -152,6 +152,16 @@ input[type="range"] {
     color: #86868B;
 }
 
+.app-footer a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+}
+
+.app-footer a:hover {
+    opacity: 0.8;
+}
+
 @media (max-width: 768px) {
     .image-processor {
         grid-template-columns: 1fr;
